@@ -27,29 +27,30 @@ void Nodelet::onInit()
 {
   ros::NodeHandle pnh = getPrivateNodeHandle();
   std::string net_config_path, weights_path, labels_path;
-  if (!pnh.getParam("net_config_path", net_config_path))
+  // 载入配置文件　
+  if (!pnh.getParam("net_config_path", net_config_path))// 模型文件
   {
     ROS_WARN("param net_cfg_path not set, use default");
   }
-  if (!pnh.getParam("weights_path", weights_path))
+  if (!pnh.getParam("weights_path", weights_path))// 权重
   {
     ROS_WARN("param weights_path not set, use default");
   }
-  if (!pnh.getParam("labels_path", labels_path))
+  if (!pnh.getParam("labels_path", labels_path))// 标签
   {
     ROS_WARN("param labels_path not set, use default");
   }
 
-  loadResources(net_config_path, weights_path, labels_path);
+  loadResources(net_config_path, weights_path, labels_path);// 检测 
   pub_ = getNodeHandle().advertise<object_msgs::ObjectsInBoxes>("inference", 1);
 }
-
+// 话题回调函数
 void Nodelet::cbImage(const sensor_msgs::ImagePtr image_msg)
 {
   object_msgs::ObjectsInBoxes objects;
-  if (detector_->runInference(image_msg, objects))
+  if (detector_->runInference(image_msg, objects))// 前向推理
   {
-    pub_.publish(objects);
+    pub_.publish(objects);//　发布检测结果
   }
   else
   {
